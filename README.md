@@ -40,7 +40,7 @@
 
 直接访问 GitHub Pages 链接即可游玩：
 ```
-https://yourusername.github.io/j20-fighter-game
+(https://dakai-tech.github.io/Zach-s-flight/)
 ```
 
 ## 📦 本地部署
