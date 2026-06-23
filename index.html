@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>歼-20 空战王者 - 3D战斗机射击游戏</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+</head>
+<body>
+    <div id="game-container">
+        <canvas id="game-canvas"></canvas>
+
+        <!-- 开始界面 -->
+        <div id="start-screen" class="screen active">
+            <div class="title-container">
+                <h1 class="game-title">歼-20 空战王者</h1>
+                <p class="subtitle">3D战斗机射击游戏</p>
+                <div class="title-decoration">✈ ✈ ✈</div>
+            </div>
+
+            <!-- 驾驶员选择 -->
+            <div class="pilot-selection">
+                <h2>👨‍✈️ 选择驾驶员</h2>
+                <div class="pilots-grid">
+                    <div class="pilot-card selected" data-pilot="xiaojie" data-name="小杰">
+                        <div class="pilot-avatar-3d">
+                            <div class="pilot-emoji">🧑‍✈️</div>
+                        </div>
+                        <div class="pilot-name">小杰</div>
+                        <div class="pilot-title">王牌飞行员</div>
+                        <div class="pilot-desc">"准备起飞！目标：击落敌机！"</div>
+                        <div class="pilot-bonus">机炮射速 +10%</div>
+                    </div>
+                    <div class="pilot-card" data-pilot="xiaomei" data-name="小美">
+                        <div class="pilot-avatar-3d">
+                            <div class="pilot-emoji">👩‍✈️</div>
+                        </div>
+                        <div class="pilot-name">小美</div>
+                        <div class="pilot-title">狙击女王</div>
+                        <div class="pilot-desc">"精准打击，一发入魂！"</div>
+                        <div class="pilot-bonus">导弹伤害 +20%</div>
+                    </div>
+                    <div class="pilot-card" data-pilot="laowang" data-name="老王">
+                        <div class="pilot-avatar-3d">
+                            <div class="pilot-emoji">🧓</div>
+                        </div>
+                        <div class="pilot-name">老王</div>
+                        <div class="pilot-title">传奇老兵</div>
+                        <div class="pilot-desc">"年轻人，让老夫教教你！"</div>
+                        <div class="pilot-bonus">装甲 +15%</div>
+                    </div>
+                    <div class="pilot-card" data-pilot="xiaogang" data-name="小刚">
+                        <div class="pilot-avatar-3d">
+                            <div class="pilot-emoji">🦸</div>
+                        </div>
+                        <div class="pilot-name">小刚</div>
+                        <div class="pilot-title">速度狂人</div>
+                        <div class="pilot-desc">"速度就是一切！"</div>
+                        <div class="pilot-bonus">移动速度 +15%</div>
+                    </div>
+                    <div class="pilot-card" data-pilot="xiaohua" data-name="小华">
+                        <div class="pilot-avatar-3d">
+                            <div class="pilot-emoji">🧑‍🔧</div>
+                        </div>
+                        <div class="pilot-name">小华</div>
+                        <div class="pilot-title">机械天才</div>
+                        <div class="pilot-desc">"改装是我的强项！"</div>
+                        <div class="pilot-bonus">改装效果 +25%</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 战机选择 -->
+            <div class="fighter-selection">
+                <h2>✈️ 选择战机</h2>
+                <div class="fighters-grid">
+                    <div class="fighter-card selected" data-fighter="china" data-name="歼-20" data-country="中国">
+                        <div class="fighter-icon">🇨🇳</div>
+                        <div class="fighter-name">歼-20</div>
+                        <div class="fighter-country">中国</div>
+                        <div class="fighter-stats">
+                            <div class="stat"><span>速度</span><div class="bar"><div style="width:90%"></div></div></div>
+                            <div class="stat"><span>火力</span><div class="bar"><div style="width:85%"></div></div></div>
+                            <div class="stat"><span>机动</span><div class="bar"><div style="width:95%"></div></div></div>
+                        </div>
+                    </div>
+                    <div class="fighter-card" data-fighter="usa" data-name="F-22" data-country="美国">
+                        <div class="fighter-icon">🇺🇸</div>
+                        <div class="fighter-name">F-22 猛禽</div>
+                        <div class="fighter-country">美国</div>
+                        <div class="fighter-stats">
+                            <div class="stat"><span>速度</span><div class="bar"><div style="width:88%"></div></div></div>
+                            <div class="stat"><span>火力</span><div class="bar"><div style="width:90%"></div></div></div>
+                            <div class="stat"><span>机动</span><div class="bar"><div style="width:85%"></div></div></div>
+                        </div>
+                    </div>
+                    <div class="fighter-card" data-fighter="japan" data-name="F-2" data-country="日本">
+                        <div class="fighter-icon">🇯🇵</div>
+                        <div class="fighter-name">F-2 支援战斗机</div>
+                        <div class="fighter-country">日本</div>
+                        <div class="fighter-stats">
+                            <div class="stat"><span>速度</span><div class="bar"><div style="width:75%"></div></div></div>
+                            <div class="stat"><span>火力</span><div class="bar"><div style="width:80%"></div></div></div>
+                            <div class="stat"><span>机动</span><div class="bar"><div style="width:78%"></div></div></div>
+                        </div>
+                    </div>
+                    <div class="fighter-card" data-fighter="france" data-name="阵风" data-country="法国">
+                        <div class="fighter-icon">🇫🇷</div>
+                        <div class="fighter-name">阵风 Rafale</div>
+                        <div class="fighter-country">法国</div>
+                        <div class="fighter-stats">
+                            <div class="stat"><span>速度</span><div class="bar"><div style="width:82%"></div></div></div>
+                            <div class="stat"><span>火力</span><div class="bar"><div style="width:85%"></div></div></div>
+                            <div class="stat"><span>机动</span><div class="bar"><div style="width:88%"></div></div></div>
+                        </div>
+                    </div>
+                    <div class="fighter-card" data-fighter="russia" data-name="苏-57" data-country="俄罗斯">
+                        <div class="fighter-icon">🇷🇺</div>
+                        <div class="fighter-name">苏-57</div>
+                        <div class="fighter-country">俄罗斯</div>
+                        <div class="fighter-stats">
+                            <div class="stat"><span>速度</span><div class="bar"><div style="width:92%"></div></div></div>
+                            <div class="stat"><span>火力</span><div class="bar"><div style="width:88%"></div></div></div>
+                            <div class="stat"><span>机动</span><div class="bar"><div style="width:90%"></div></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 地图选择 -->
+            <div class="map-selection">
+                <h2>🗺️ 选择战场</h2>
+                <div class="maps-grid">
+                    <div class="map-card selected" data-map="sky" data-name="万里晴空">
+                        <div class="map-icon">☁️</div>
+                        <div class="map-name">万里晴空</div>
+                        <div class="map-desc">蓝天白云，视野开阔</div>
+                        <div class="map-boss">首领：天空霸主</div>
+                    </div>
+                    <div class="map-card" data-map="storm" data-name="雷暴峡谷">
+                        <div class="map-icon">⛈️</div>
+                        <div class="map-name">雷暴峡谷</div>
+                        <div class="map-desc">电闪雷鸣，能见度低</div>
+                        <div class="map-boss">首领：雷霆之王</div>
+                    </div>
+                    <div class="map-card" data-map="night" data-name="暗夜都市">
+                        <div class="map-icon">🌃</div>
+                        <div class="map-name">暗夜都市</div>
+                        <div class="map-desc">城市上空，灯火阑珊</div>
+                        <div class="map-boss">首领：暗影猎手</div>
+                    </div>
+                    <div class="map-card" data-map="ocean" data-name="深海风暴">
+                        <div class="map-icon">🌊</div>
+                        <div class="map-name">深海风暴</div>
+                        <div class="map-desc">海面上空，波涛汹涌</div>
+                        <div class="map-boss">首领：深海巨兽</div>
+                    </div>
+                    <div class="map-card" data-map="volcano" data-name="火山禁区">
+                        <div class="map-icon">🌋</div>
+                        <div class="map-name">火山禁区</div>
+                        <div class="map-desc">岩浆喷发，热浪滚滚</div>
+                        <div class="map-boss">首领：熔岩暴君</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 音乐选择 -->
+            <div class="music-selection">
+                <h2>🎵 选择战斗音乐</h2>
+                <div class="music-grid">
+                    <div class="music-card selected" data-music="epic">
+                        <div class="music-icon">🎺</div>
+                        <div class="music-name">史诗战歌</div>
+                        <div class="music-desc">激昂澎湃，热血沸腾</div>
+                    </div>
+                    <div class="music-card" data-music="rock">
+                        <div class="music-icon">🎸</div>
+                        <div class="music-name">摇滚风暴</div>
+                        <div class="music-desc">电吉他独奏，节奏强烈</div>
+                    </div>
+                    <div class="music-card" data-music="electronic">
+                        <div class="music-icon">🎹</div>
+                        <div class="music-name">电子脉冲</div>
+                        <div class="music-desc">合成器音效，未来感强</div>
+                    </div>
+                    <div class="music-card" data-music="orchestral">
+                        <div class="music-icon">🎻</div>
+                        <div class="music-name">交响乐章</div>
+                        <div class="music-desc">管弦乐队，气势磅礴</div>
+                    </div>
+                    <div class="music-card" data-music="silent">
+                        <div class="music-icon">🔇</div>
+                        <div class="music-name">静音模式</div>
+                        <div class="music-desc">关闭背景音乐</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 改装系统 -->
+            <div class="upgrade-section">
+                <h2>🔧 战机改装</h2>
+                <div class="upgrade-points">
+                    <span>改装点数: </span>
+                    <span id="upgrade-points">5</span>
+                </div>
+                <div class="upgrades-grid" id="upgrades-container">
+                    <!-- 动态生成改装选项 -->
+                </div>
+            </div>
+
+            <!-- 游戏背景故事 -->
+            <div class="story-section">
+                <h2>📖 游戏背景</h2>
+                <div class="story-content">
+                    <p>2045年，全球局势动荡不安。五大军事强国为了争夺空中霸权，展开了一场史无前例的空战竞赛。</p>
+                    <p>你作为一名王牌飞行员，驾驶着最先进的战斗机，穿梭于五大战场之间。每一片天空都有强大的首领守护，只有击败他们，才能证明你是真正的空战王者！</p>
+                    <p>改装你的战机，选择你的驾驶员，征服所有战场！</p>
+                </div>
+            </div>
+
+            <div class="controls-info">
+                <div class="control-group">
+                    <div class="key">↑↓←→</div>
+                    <span>控制方向</span>
+                </div>
+                <div class="control-group">
+                    <div class="key">空格</div>
+                    <span>机炮射击</span>
+                </div>
+                <div class="control-group">
+                    <div class="key">回车</div>
+                    <span>发射导弹</span>
+                </div>
+                <div class="control-group mobile">
+                    <div class="key">触摸</div>
+                    <span>滑动控制</span>
+                </div>
+            </div>
+
+            <button id="start-btn" class="btn-primary">🚀 开始战斗</button>
+            <p class="version">五局三胜制 | 改装系统 | 5大首领 | 跨平台支持</p>
+        </div>
+
+        <!-- 游戏界面 -->
+        <div id="game-screen" class="screen">
+            <div id="hud">
+                <div class="hud-top">
+                    <div class="score-board">
+                        <div class="player-score">
+                            <span class="label">我方</span>
+                            <span class="score" id="player-score">0</span>
+                        </div>
+                        <div class="round-info">
+                            <span id="round-display">第 1 局</span>
+                            <span id="match-score">0 - 0</span>
+                        </div>
+                        <div class="enemy-score">
+                            <span class="score" id="enemy-score">0</span>
+                            <span class="label">敌方</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BOSS血条 -->
+                <div id="boss-hud" class="boss-hud hidden">
+                    <div class="boss-name" id="boss-name">首领</div>
+                    <div class="boss-health-bar">
+                        <div class="boss-health-fill" id="boss-health-fill"></div>
+                    </div>
+                    <div class="boss-health-text" id="boss-health-text">100%</div>
+                </div>
+
+                <div class="hud-bottom">
+                    <div class="health-bar">
+                        <div class="bar-container">
+                            <div class="bar-fill" id="player-health"></div>
+                        </div>
+                        <span class="health-label">装甲</span>
+                    </div>
+                    <div class="weapon-info">
+                        <div class="weapon-item">
+                            <span id="ammo-count">∞</span>
+                            <span class="weapon-label">机炮</span>
+                        </div>
+                        <div class="weapon-item missile">
+                            <span id="missile-count">3</span>
+                            <span class="weapon-label">导弹</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="touch-controls" class="mobile-only">
+                <div id="joystick-area" class="joystick-area">
+                    <div id="joystick-knob" class="joystick-knob"></div>
+                </div>
+                <div class="touch-buttons">
+                    <div id="fire-btn" class="fire-btn">🔥</div>
+                    <div id="missile-btn" class="missile-btn">🚀</div>
+                </div>
+            </div>
+
+            <div id="message-area"></div>
+        </div>
+
+        <!-- 回合结束界面 -->
+        <div id="round-screen" class="screen">
+            <div class="round-result">
+                <h2 id="round-result-title">回合结束</h2>
+                <p id="round-result-text"></p>
+                <div class="round-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">击中次数</span>
+                        <span class="stat-value" id="stat-hits">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">命中率</span>
+                        <span class="stat-value" id="stat-accuracy">0%</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">剩余生命</span>
+                        <span class="stat-value" id="stat-health">100%</span>
+                    </div>
+                </div>
+                <button id="next-round-btn" class="btn-primary">下一局</button>
+            </div>
+        </div>
+
+        <!-- 游戏结束界面 -->
+        <div id="gameover-screen" class="screen">
+            <div class="gameover-result">
+                <h2 id="gameover-title">战斗结束</h2>
+                <div class="final-score">
+                    <div class="final-player">
+                        <span class="final-label">我方</span>
+                        <span class="final-score-num" id="final-player-score">0</span>
+                    </div>
+                    <div class="final-vs">VS</div>
+                    <div class="final-enemy">
+                        <span class="final-score-num" id="final-enemy-score">0</span>
+                        <span class="final-label">敌方</span>
+                    </div>
+                </div>
+                <p id="gameover-message"></p>
+                <button id="restart-btn" class="btn-primary">再来一局</button>
+                <button id="menu-btn" class="btn-secondary">返回主菜单</button>
+            </div>
+        </div>
+
+        <!-- 首领击败界面 -->
+        <div id="boss-defeat-screen" class="screen">
+            <div class="boss-defeat-result">
+                <h2>🎉 首领击败！</h2>
+                <div class="boss-reward">
+                    <p>你击败了 <span id="defeated-boss-name">首领</span>！</p>
+                    <div class="reward-items">
+                        <div class="reward-item">
+                            <span class="reward-icon">⭐</span>
+                            <span class="reward-text">获得改装点数 +2</span>
+                        </div>
+                        <div class="reward-item">
+                            <span class="reward-icon">🏆</span>
+                            <span class="reward-text">解锁新地图</span>
+                        </div>
+                    </div>
+                </div>
+                <button id="continue-btn" class="btn-primary">继续挑战</button>
+            </div>
+        </div>
+
+        <!-- 加载界面 -->
+        <div id="loading-screen" class="screen">
+            <div class="loading-content">
+                <div class="spinner"></div>
+                <p>加载战机模型...</p>
+                <div class="loading-progress">
+                    <div class="progress-bar" id="loading-bar"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/fighter-models.js"></script>
+    <script src="js/game-engine.js"></script>
+    <script src="js/ai-controller.js"></script>
+    <script src="js/audio-manager.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
